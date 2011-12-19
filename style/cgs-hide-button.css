@@ -1,0 +1,13 @@
+td.gsc-search-button {
+    display: none !important;
+    width: 1px !important;
+}
+
+td.gsc-clear-button {
+    display: none !important;
+    width: 1px !important;
+}
+
+.gsc-search-box {
+    width: 95% !important;
+}

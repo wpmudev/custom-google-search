@@ -1,0 +1,8 @@
+=== Custom Google Search===
+Author: Andrey Shipilov (Incsub)
+Plugin Page: http://premium.wpmudev.org/project/custom-google-search
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release;
