@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Custom Google Search
-Plugin URI: http://premium.wpmudev.org/project/
-Description: This plugin integrate the Google Custom Search into your site. It replaces the default WordPress search on the Google Custom Search and adds widget "Google Custom Search".
-Version: 1.0.0.1
+Plugin URI: http://premium.wpmudev.org/project/custom-google-search
+Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
+Version: 1.0.0.2
 Author: Andrey Shipilov (Incsub)
-Author URI: http://premium.wpmudev.org/project/google-custom-search
+Author URI: http://premium.wpmudev.org
 WDP ID: 252
 
 Copyright 2009-2011 Incsub (http://incsub.com)
@@ -125,7 +125,11 @@ class CustomGoogleSearch {
     function save_settings() {
         if ( isset( $_GET['page'] ) && 'custom-google-search-settings' == $_GET['page'] && isset( $_POST['save_cgs'] ) ) {
             if ( wp_verify_nonce( $_POST['_wpnonce'], 'save_cgs' ) ) {
-                update_option( $this->option_name, $_POST['settings'] );
+                $params                 = $_POST['settings'];
+                $params['engine_id']    = $this->get_id_from_embed( $params['embed_code'] );
+                $params['embed_code']   = trim( $params['embed_code'] );
+
+                update_option( $this->option_name, $params );
                 wp_redirect( add_query_arg( array( 'page' => 'custom-google-search-settings', 'dmsg' => urlencode( __( 'Changes are saved.', $this->text_domain ) ) ), 'options-general.php' ) );
             }
 
@@ -144,6 +148,23 @@ class CustomGoogleSearch {
             );
         }
         return $themes;
+    }
+
+    /**
+     * parsed embed code for get engine ID
+     **/
+    function get_id_from_embed( $embed_code ) {
+        $engine_id  = '';
+        $embed_code = preg_replace( "/[ \n\r\t\v\'\"]/m", "", stripslashes( $embed_code ) );
+        preg_match_all( "/CustomSearchControl[(](.*?)[)]/mi", $embed_code, $matches );
+
+        if( isset( $matches[1][0] ) && '' != $matches[1][0] ) {
+            $engine_id = $matches[1][0];
+        } elseif( '' != $embed_code && 40 > strlen( $embed_code ) ) {
+            $engine_id = $embed_code;
+        }
+
+        return $engine_id;
     }
 
     /**
