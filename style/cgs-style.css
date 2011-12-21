@@ -90,4 +90,13 @@ wp-google-custom-search CSS Styles
     margin: 0px 0px 15px 0px;
 }
 
+
+/* fix for WP 3.3 */
+.ui-widget-overlay {
+    z-index: 99998 !important;
+}
+.ui-dialog {
+    z-index: 99999 !important;
+}
+
 /* end Popup block */
