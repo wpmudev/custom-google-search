@@ -3,7 +3,7 @@
 Plugin Name: Custom Google Search
 Plugin URI: http://premium.wpmudev.org/project/custom-google-search
 Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
-Version: 1.0.0
+Version: 1.0.1
 Author: Andrey Shipilov (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 252
@@ -74,6 +74,25 @@ class CustomGoogleSearch {
         //get settings values
         $this->get_settings();
 
+
+        add_action( 'wp_enqueue_scripts', array( &$this, 'add_js_css' ) );
+
+        //creating menu of the plugin
+        add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
+
+        //save settings
+        add_action( 'admin_init', array( &$this, 'save_settings' ) );
+
+        add_action( 'template_redirect', array( &$this, 'display_search_box' ) );
+//        add_action( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
+        add_filter( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
+    }
+
+
+    /**
+     * including JS/CSS
+     **/
+    function add_js_css() {
         //including JS
         wp_enqueue_script( 'jquery' );
         wp_enqueue_script( 'jquery-ui-dialog' );
@@ -91,19 +110,7 @@ class CustomGoogleSearch {
         if ( isset( $this->settings['hide_button'] ) && '1' == $this->settings['hide_button'] ) {
             wp_enqueue_style( 'CGSHideButton', $this->plugin_url . 'style/cgs-hide-button.css' );
         }
-
-
-        //creating menu of the plugin
-        add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
-
-        //save settings
-        add_action( 'admin_init', array( &$this, 'save_settings' ) );
-
-        add_action( 'template_redirect', array( &$this, 'display_search_box' ) );
-//        add_action( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
-        add_filter( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
     }
-
 
     /**
      * Adds admin menu for settings page
@@ -340,10 +347,12 @@ class CustomGoogleSearch {
      * change regular search box only if searchform.php not exist
      **/
     function change_regular_search_box( $form ) {
-        $args = array(
-            'display_results' => 3
-        );
-        $form = '<div id="searchform"> ' . $this->generate_search_box( $args ) .'</div>';
+        if ( isset( $this->settings['engine_id'] ) && '' != $this->settings['engine_id'] ) {
+            $args = array(
+                'display_results' => 3
+            );
+            $form = '<div id="searchform"> ' . $this->generate_search_box( $args ) .'</div>';
+        }
         return $form;
     }
 

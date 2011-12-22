@@ -36,12 +36,13 @@ class CGS_Widget extends WP_Widget {
 
 		extract( $args );
 
-        $args = array(
-            'display_results' => $instance['display_results']
-        );
-
-        //display widget content
-        echo $custom_google_search->generate_search_box( $args );
+        if ( isset( $custom_google_search->settings['engine_id'] ) && '' != $custom_google_search->settings['engine_id'] ) {
+            $args = array(
+                'display_results' => $instance['display_results']
+            );
+            //display widget content
+            echo $custom_google_search->generate_search_box( $args );
+        }
 
 	}
 

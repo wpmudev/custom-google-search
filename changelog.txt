@@ -4,5 +4,8 @@ Plugin Page: http://premium.wpmudev.org/project/custom-google-search
 
 == Changelog ==
 
+= 1.0.1 =
+- Fixed notice;
+
 = 1.0.0 =
 * Initial release;
