@@ -4,6 +4,9 @@ Plugin Page: http://premium.wpmudev.org/project/custom-google-search
 
 == Changelog ==
 
+= 1.0.2 =
+- Fixed structure of HTML on Search page;
+
 = 1.0.1 =
 - Fixed notice;
 
