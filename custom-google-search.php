@@ -3,8 +3,8 @@
 Plugin Name: Custom Google Search
 Plugin URI: http://premium.wpmudev.org/project/custom-google-search
 Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
-Version: 1.0.2
-Author: Andrey Shipilov (Incsub)
+Version: 1.1
+Author: Andrey Shipilov (Incsub), Cole S (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 252
 
@@ -23,15 +23,6 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-
-if ( !function_exists( 'wdp_un_check' ) ) {
-  add_action( 'admin_notices', 'wdp_un_check', 5 );
-  add_action( 'network_admin_notices', 'wdp_un_check', 5 );
-  function wdp_un_check() {
-    if ( !class_exists( 'WPMUDEV_Update_Notifications' ) && current_user_can( 'install_plugins' ) )
-      echo '<div class="error fade"><p>' . __('Please install the latest version of <a href="http://premium.wpmudev.org/project/update-notifications/" title="Download Now &raquo;">our free Update Notifications plugin</a> which helps you stay up-to-date with the most stable, secure versions of WPMU DEV themes and plugins. <a href="http://premium.wpmudev.org/wpmu-dev/update-notifications-plugin-information/">More information &raquo;</a>', 'email-newsletter') . '</a></p></div>';
-  }
-}
 
 include_once( dirname( __FILE__ ) . '/widget.php' );
 
@@ -67,13 +58,14 @@ class CustomGoogleSearch {
         } else {
             wp_die( __('There was an issue determining where WPMU DEV Update Notifications is installed. Please reinstall.', 'email-newsletter' ) );
         }
-
+		
+		include_once($this->plugin_dir . 'class.wpmudev_dash_notification.php');
+		
         //loading translation file
         load_plugin_textdomain( $this->text_domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
         //get settings values
         $this->get_settings();
-
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'add_js_css' ) );
 
@@ -172,14 +164,15 @@ class CustomGoogleSearch {
     function get_id_from_embed( $embed_code ) {
         $engine_id  = '';
         $embed_code = preg_replace( "/[ \n\r\t\v\'\"]/m", "", stripslashes( $embed_code ) );
-        preg_match_all( "/CustomSearchControl[(](.*?)[)]/mi", $embed_code, $matches );
-
-        if( isset( $matches[1][0] ) && '' != $matches[1][0] ) {
-            $engine_id = $matches[1][0];
-        } elseif( '' != $embed_code && 40 > strlen( $embed_code ) ) {
-            $engine_id = $embed_code;
-        }
-
+		
+		$start = strpos($embed_code, 'varcx=');
+		$end = strpos($embed_code,';',$start);		
+		
+		if($start && $end) {		
+			$engine_id = substr($embed_code, $start+6, $end - ($start+6)) ;
+		} else {
+			$engine_id = '';
+		}
         return $engine_id;
     }
 
@@ -220,34 +213,46 @@ class CustomGoogleSearch {
 
                 //callback function
                 function CallBackDisplayPopup(result) {
-                    jQuery( "#cgs_popup" ).dialog( "open" );
+                	jQuery( "#cgs_popup" ).dialog( "open" );
                 }
+				
+				//code for display popup with results
+	            jQuery( document ).ready( function() {
 
-                //code for display popup with results
-                jQuery( document ).ready( function() {
+	                // popup
+	                jQuery( "#cgs_popup" ).dialog({
+	                    autoOpen: false,
+	                    width: 600,
+	                    height: 500,
+	                    modal: true
+	                });
+					
+	            });
 
-                    // popup
-                    jQuery( "#cgs_popup" ).dialog({
-                        autoOpen: false,
-                        width: 600,
-                        height: 500,
-                        modal: true
-                    });
-
-                });
+                
             ';
 
         } elseif ( isset( $args['display_results'] ) && 2 == $args['display_results'] ) {
             //display result bottom of thw widget
-            $CSC_draw = 'customSearchControl.draw( "cgs-widget", options );';
+            $CSC_draw = 'customSearchControl.draw( "cgs-widget", options );
+            	jQuery("form.gsc-search-box").on("submit", function() {
+					jQuery(this).find(".gsc-search-button").trigger("click");
+					return false;
+				});
+            ';
+			
         } elseif ( isset( $args['display_results'] ) && 3 == $args['display_results'] ) {
             //display result bottom of thw widget
             $CSC_draw = '
                 customSearchControl.draw( "cgs", options );
-
+				
                 customSearchControl.setSearchStartingCallback( this, function( control, searcher, query ) {
-                    window.location.href = "' . get_option( 'siteurl' ) . '/?s=" + query;
+                    window.location.href = "' . site_url() . '/?s=" + query;
                 });
+				jQuery("form.gsc-search-box").on("submit", function() {
+					jQuery(this).find(".gsc-search-button").trigger("click");
+					return false;
+				});
             ';
         } else {
             $CSC_draw = 'customSearchControl.draw( "cgs-' . $search_div_id . '", options );';
@@ -356,7 +361,12 @@ class CustomGoogleSearch {
 
 
 }
-
+global $custom_google_search;
 $custom_google_search = &new CustomGoogleSearch();
+
+function cgs_generate_search_box($args = '') {
+	global $custom_google_search;
+	echo $custom_google_search->generate_search_box($args);
+}
 
 ?>
