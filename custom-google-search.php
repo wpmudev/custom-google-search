@@ -3,12 +3,12 @@
 Plugin Name: Custom Google Search
 Plugin URI: http://premium.wpmudev.org/project/custom-google-search
 Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
-Version: 1.1
-Author: Andrey Shipilov (Incsub), Cole S (Incsub)
+Version: 1.2
+Author: Andrey Shipilov (Incsub), Cole S (Incsub), Mariusz Misiek (Incsub)
 Author URI: http://premium.wpmudev.org
 WDP ID: 252
 
-Copyright 2009-2011 Incsub (http://incsub.com)
+Copyright 2009-2013 Incsub (http://incsub.com)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -247,7 +247,7 @@ class CustomGoogleSearch {
                 customSearchControl.draw( "cgs", options );
 				
                 customSearchControl.setSearchStartingCallback( this, function( control, searcher, query ) {
-                    window.location.href = "' . site_url() . '/?s=" + query;
+                    window.location.href = "' . home_url() . '/?s=" + query;
                 });
 				jQuery("form.gsc-search-box").on("submit", function() {
 					jQuery(this).find(".gsc-search-button").trigger("click");
@@ -257,6 +257,11 @@ class CustomGoogleSearch {
         } else {
             $CSC_draw = 'customSearchControl.draw( "cgs-' . $search_div_id . '", options );';
         }
+        $same_window = $this->settings['same_window'];
+        if($same_window)
+            $same_window = 'customSearchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);';
+        else
+            $same_window = '';
 
         //get code of seach box
         $search_box = '
@@ -275,7 +280,7 @@ class CustomGoogleSearch {
                 options.setAutoComplete(true);
 
                 customSearchControl.setResultSetSize( google.search.Search.FILTERED_CSE_RESULTSET );
-
+                ' . $same_window . '
                 ' . $CSC_draw .'
 
                 ' . $search_text .'

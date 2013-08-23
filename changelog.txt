@@ -1,8 +1,12 @@
 === Custom Google Search===
-Author: Andrey Shipilov (Incsub)
+Author: Andrey Shipilov (Incsub), Cole S (Incsub), Mariusz Misiek (Incsub)
 Plugin Page: http://premium.wpmudev.org/project/custom-google-search
 
 == Changelog ==
+
+= 1.2 =
+- Added option to open clicked search result in same window
+- Fixed search result page use of incorrect(WordPress Admin) URL
 
 = 1.1 =
 - CGS has been upgraded to API v2

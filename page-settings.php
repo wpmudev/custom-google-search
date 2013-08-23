@@ -79,6 +79,14 @@ $settings = $this->settings;
                 </tr>
                 <tr>
                     <th>
+                        <label for="settings_same_window"><?php _e( 'Open clicked search result in same window', $this->text_domain ) ?>:</label>
+                    </th>
+                    <td>
+                        <input name="settings[same_window]" id="settings_same_window" type="checkbox" value="1" <?php echo ( isset( $settings['same_window'] ) && '1' == $settings['same_window'] ) ? 'checked' : '' ; ?> />
+                    </td>
+                </tr>
+                <tr>
+                    <th>
                         <label for="settings_hide_button"><?php _e( 'Hide search button', $this->text_domain ) ?>:</label>
                     </th>
                     <td>
