@@ -60,6 +60,22 @@ $settings = $this->settings;
                 </tr>
                 <tr>
                     <th>
+                        <label for="page_mode"><?php _e( 'Display search results as', $this->text_domain ) ?>:</label>
+                    </th>
+                    <td>
+                        <select name="settings[page_mode]" id="settings_style" >
+                            <option value="page" <?php echo ( isset( $settings['page_mode'] ) && 'page' == $settings['page_mode'] ) ? 'selected' : ''; ?> ><?php _e( 'Standard Page', $this->text_domain ) ?></option>
+                            <option value="search" <?php echo ( isset( $settings['page_mode'] ) && 'search' == $settings['page_mode'] ) ? 'selected' : ''; ?> ><?php _e( 'Search Page', $this->text_domain ) ?></option>
+                            <option value="generated" <?php echo ( isset( $settings['page_mode'] ) && 'generated' == $settings['page_mode'] ) ? 'selected' : ''; ?> ><?php _e( 'Generated Page (risky)', $this->text_domain ) ?></option>
+                        </select>
+                        <br />
+                        <span class="description">
+                            <?php _e( 'Decide what method would you like to use to display search results. Its best to try them and choose the one that works best with your theme.', $this->text_domain ) ?>
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
                         <label for="settings_style"><?php _e( 'Style', $this->text_domain ) ?>:</label>
                     </th>
                     <td>
@@ -99,6 +115,10 @@ $settings = $this->settings;
                     </th>
                     <td>
                         <input name="settings[show_sidebar]" id="settings_show_sidebar" type="checkbox" value="1" <?php echo ( isset( $settings['show_sidebar'] ) && '1' == $settings['show_sidebar'] ) ? 'checked' : '' ; ?> />
+
+                        <span class="description">
+                            <?php _e( 'Only works when search results are displayed as generated page.', $this->text_domain ) ?>
+                        </span>
                     </td>
                 </tr>
                 <tr>

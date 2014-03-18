@@ -1,8 +1,14 @@
 === Custom Google Search===
-Author: Andrey Shipilov (Incsub), Cole S (Incsub), Mariusz Misiek (Incsub)
 Plugin Page: http://premium.wpmudev.org/project/custom-google-search
+Author: WPMUDEV
+Lead developer: Maniu
+Contributors: Andrey Shipilov, Cole S
 
 == Changelog ==
+
+= 1.2.2 =
+- Added option to choose different methods of displaying search results
+- Fixed security issues
 
 = 1.2 =
 - Added option to open clicked search result in same window

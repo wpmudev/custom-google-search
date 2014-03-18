@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Custom Google Search v1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-23 17:24+0100\n"
+"POT-Creation-Date: 2014-03-18 13:02+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,46 +17,31 @@ msgstr ""
 "\\wp-content\\plugins\\custom-google-search\n"
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/class.wpmudev_dash_notification.php:57
-#, php-format
-msgid ""
-"Easily get updates, support, and one-click WPMU DEV plugin/theme "
-"installations right from in your dashboard - <strong><a href=\"%s\" title="
-"\"Install Now &raquo;\">install the free WPMU DEV Dashboard plugin</a></"
-"strong>. &nbsp;&nbsp;&nbsp;<small><a href=\"http://premium.wpmudev.org/wpmu-"
-"dev/update-notifications-plugin-information/\">(find out more)</a></small>"
-msgstr ""
-
-#: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/class.wpmudev_dash_notification.php:61
-#, php-format
-msgid ""
-"Updates, Support, Premium Plugins, Community - <strong><a href=\"%s\" title="
-"\"Activate Now &raquo;\">activate the WPMU DEV Dashboard plugin now</a></"
-"strong>."
-msgstr ""
-
-#: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:59
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:63
 msgid ""
 "There was an issue determining where WPMU DEV Update Notifications is "
 "installed. Please reinstall."
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:111
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:112
 #: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/widget.php:28
 msgid "Custom Google Search"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:141
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:142
 msgid "Changes are saved."
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:297
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:298
 msgid "Search Results"
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/custom-google-search.php:360
+msgid "Search results for: "
 msgstr ""
 
 #: C:\Programs
@@ -98,81 +83,113 @@ msgstr ""
 
 #: C:\Programs
 #: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:63
-msgid "Style"
+msgid "Display search results as"
 msgstr ""
 
 #: C:\Programs
 #: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:67
-msgid "Default"
+msgid "Standard Page"
 msgstr ""
 
 #: C:\Programs
 #: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:68
-msgid "Purple"
+msgid "Search Page"
 msgstr ""
 
 #: C:\Programs
 #: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:69
+msgid "Generated Page (risky)"
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:73
+msgid ""
+"Decide what method would you like to use to display search results. Its best "
+"to try them and choose the one that works best with your theme."
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:79
+msgid "Style"
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:83
+msgid "Default"
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:84
+msgid "Purple"
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:85
 msgid "Green"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:70
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:86
 msgid "Coffee"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:71
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:87
 msgid "Silver"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:72
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:88
 msgid "Minimalist"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:76
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:92
 msgid "Color scheme for the search box."
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:82
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:98
 msgid "Open clicked search result in same window"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:90
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:106
 msgid "Hide search button"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:98
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:114
 msgid "Show sidebar on search page"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:106
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:120
+msgid "Only works when search results are displayed as generated page."
+msgstr ""
+
+#: C:\Programs
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:126
 msgid "Specify your website's protocol"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:110
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:130
 msgid "HTTP"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:113
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:133
 msgid "HTTPS"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:116
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:136
 msgid "Protocol-relative URLs"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:120
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:140
 msgid ""
 "Websites that use SSL (HTTPS) should use the HTTPS version of the code. "
 "Protocol relative URLs allow the browser to use the same protocol as your "
@@ -180,17 +197,17 @@ msgid ""
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:128
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:148
 msgid "Widget"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:133
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:153
 msgid "Theme for Popup"
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:152
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:172
 msgid ""
 "Note: you can use any jQuery UI theme for your widget. Just upload the theme "
 "folder to /wp-google-custom-search/style/popup_themes/ and rename the .css "
@@ -199,7 +216,7 @@ msgid ""
 msgstr ""
 
 #: C:\Programs
-#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:161
+#: Portable\xampp\htdocs\wordpress-incsub\wp-content\plugins\custom-google-search/page-settings.php:181
 msgid "Save Changes"
 msgstr ""
 

@@ -3,8 +3,8 @@
 Plugin Name: Custom Google Search
 Plugin URI: http://premium.wpmudev.org/project/custom-google-search
 Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
-Version: 1.2
-Author: Andrey Shipilov (Incsub), Cole S (Incsub), Mariusz Misiek (Incsub)
+Version: 1.2.2
+Author: WPMUDEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 252
 
@@ -45,6 +45,10 @@ class CustomGoogleSearch {
      **/
     function __construct() {
 
+        global $wpmudev_notices;
+        $wpmudev_notices[] = array( 'id'=> 252,'name'=> 'Custom Google Search', 'screens' => array( 'settings_page_custom-google-search-settings' ) );
+        include_once($this->plugin_dir . 'external/dash-notice/wpmudev-dash-notification.php');
+
         //setup proper directories
         if ( is_multisite() && defined( 'WPMU_PLUGIN_URL' ) && defined( 'WPMU_PLUGIN_DIR' ) && file_exists( WPMU_PLUGIN_DIR . '/' . basename( __FILE__ ) ) ) {
             $this->plugin_dir = WPMU_PLUGIN_DIR . '/custom-google-search/';
@@ -58,9 +62,7 @@ class CustomGoogleSearch {
         } else {
             wp_die( __('There was an issue determining where WPMU DEV Update Notifications is installed. Please reinstall.', 'email-newsletter' ) );
         }
-		
-		include_once($this->plugin_dir . 'class.wpmudev_dash_notification.php');
-		
+
         //loading translation file
         load_plugin_textdomain( $this->text_domain, false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
@@ -76,7 +78,6 @@ class CustomGoogleSearch {
         add_action( 'admin_init', array( &$this, 'save_settings' ) );
 
         add_action( 'template_redirect', array( &$this, 'display_search_box' ) );
-//        add_action( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
         add_filter( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
     }
 
@@ -162,17 +163,15 @@ class CustomGoogleSearch {
      * parsed embed code for get engine ID
      **/
     function get_id_from_embed( $embed_code ) {
-        $engine_id  = '';
+        $engine_id  = $embed_code;
         $embed_code = preg_replace( "/[ \n\r\t\v\'\"]/m", "", stripslashes( $embed_code ) );
-		
+
 		$start = strpos($embed_code, 'varcx=');
-		$end = strpos($embed_code,';',$start);		
-		
-		if($start && $end) {		
-			$engine_id = substr($embed_code, $start+6, $end - ($start+6)) ;
-		} else {
-			$engine_id = '';
-		}
+		$end = strpos($embed_code,';',$start);
+
+		if($start && $end)
+			$engine_id = substr($embed_code, $start+6, $end - ($start+6));
+
         return $engine_id;
     }
 
@@ -192,10 +191,12 @@ class CustomGoogleSearch {
         $protocol = ( !isset( $this->settings['protocol'] ) ) ? 'http:' : ( ( isset( $this->settings['protocol'] ) && 'relative' != $this->settings['protocol'] ) ? $this->settings['protocol'] : '');
 
         //run search by query
-        if ( isset( $args['search_text'] ) )
+        if ( isset( $args['search_text'] ) ) {
+            $search_query = get_search_query();
             $search_text = '
                 ///run search by query
-                customSearchControl.execute("' . $_REQUEST['s'] . '");';
+                customSearchControl.execute("' . $search_query . '");';
+        }
         else
             $search_text = '';
 
@@ -215,7 +216,7 @@ class CustomGoogleSearch {
                 function CallBackDisplayPopup(result) {
                 	jQuery( "#cgs_popup" ).dialog( "open" );
                 }
-				
+
 				//code for display popup with results
 	            jQuery( document ).ready( function() {
 
@@ -226,10 +227,10 @@ class CustomGoogleSearch {
 	                    height: 500,
 	                    modal: true
 	                });
-					
+
 	            });
 
-                
+
             ';
 
         } elseif ( isset( $args['display_results'] ) && 2 == $args['display_results'] ) {
@@ -240,12 +241,12 @@ class CustomGoogleSearch {
 					return false;
 				});
             ';
-			
+
         } elseif ( isset( $args['display_results'] ) && 3 == $args['display_results'] ) {
             //display result bottom of thw widget
             $CSC_draw = '
                 customSearchControl.draw( "cgs", options );
-				
+
                 customSearchControl.setSearchStartingCallback( this, function( control, searcher, query ) {
                     window.location.href = "' . home_url() . '/?s=" + query;
                 });
@@ -257,7 +258,7 @@ class CustomGoogleSearch {
         } else {
             $CSC_draw = 'customSearchControl.draw( "cgs-' . $search_div_id . '", options );';
         }
-        $same_window = $this->settings['same_window'];
+        $same_window = isset($this->settings['same_window']) ? $this->settings['same_window'] : '';
         if($same_window)
             $same_window = 'customSearchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);';
         else
@@ -315,8 +316,8 @@ class CustomGoogleSearch {
      * Display search box
      **/
     function display_search_box() {
+        global $wp_query;
 
-        // not a search page; don't do anything and return
         if ( stripos( $_SERVER['REQUEST_URI'], '/?s=' ) === FALSE && stripos( $_SERVER['REQUEST_URI'], '/search/') === FALSE ) {
             return;
         }
@@ -324,31 +325,80 @@ class CustomGoogleSearch {
             return;
         }
 
-        get_header();
+        if(!isset($this->settings['page_mode']))
+            $this->settings['page_mode'] = '';
+        if($this->settings['page_mode'] == 'page' || $this->settings['page_mode'] == 'search') {
+            if($this->settings['page_mode'] == 'page')
+                remove_all_filters('the_content');
+            else
+                remove_all_filters('the_excerpt');
 
-        echo '<div id="content" role="main">';
+            $arg = array();
+            $search_query = get_search_query();
+            if ( '' != $search_query )
+                $args = array(
+                    'search_text' => $search_query
+                );
 
-        $arg = array();
+            $search_box = $this->generate_search_box( $args );
 
-        if ( isset( $_REQUEST['s'] ) && '' != $_REQUEST['s'] )
-            $args = array(
-                'search_text' => $_REQUEST['s']
-            );
+            //Clear out any posts already stored in the $wp_query->posts array.
+            $wp_query->posts = array();
+            if($this->settings['page_mode'] == 'page') {
+                $wp_query->is_search = false;
+                $wp_query->is_page = true;
+            }
 
-        $search_box = $this->generate_search_box( $args );
+            //Create a fake post.
+            $post = new stdClass;
+            $post->post_author = 1;
+            $post->post_name = 'unsubscribe';
 
-        echo ( '' != $search_box ) ? $search_box : '';
+            if($wp_query->is_search)
+                $post->post_title = '';
+            else
+                $post->post_title = __( 'Search results for: ', $this->text_domain ).$search_query;
+            $post->post_content = $search_box;
+            $post->post_excerpt = $post->post_content;
+            $post->ID = 0;
+            $post->post_status = 'publish';
+            $post->post_type = 'page';
+            $post->comment_status = 'closed';
+            $post->ping_status = 'closed';
+            $post->comment_count = 0;
+            $post->post_date = current_time('mysql');
+            $post->post_date_gmt = current_time('mysql', 1);
 
-        echo '</div>';
-
-        //show sidebar
-        if ( isset( $this->settings['show_sidebar'] ) && '1' == $this->settings['show_sidebar'] ) {
-            get_sidebar();
+            $wp_query->posts[] = $post;
+            $wp_query->post_count = 1;
         }
+        else {
+            get_header();
 
-        get_footer();
-        exit;
+            echo '<div id="content" role="main">';
 
+            $arg = array();
+
+            $search_query = get_search_query();
+            if ( '' != $search_query )
+                $args = array(
+                    'search_text' => $search_query
+                );
+
+            $search_box = $this->generate_search_box( $args );
+
+            echo ( '' != $search_box ) ? $search_box : '';
+
+            echo '</div>';
+
+            //show sidebar
+            if ( isset( $this->settings['show_sidebar'] ) && '1' == $this->settings['show_sidebar'] ) {
+                get_sidebar();
+            }
+
+            get_footer();
+            exit;
+        }
     }
 
     /**
@@ -367,7 +417,7 @@ class CustomGoogleSearch {
 
 }
 global $custom_google_search;
-$custom_google_search = &new CustomGoogleSearch();
+$custom_google_search = new CustomGoogleSearch();
 
 function cgs_generate_search_box($args = '') {
 	global $custom_google_search;
