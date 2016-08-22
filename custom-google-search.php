@@ -3,7 +3,7 @@
 Plugin Name: Custom Google Search
 Plugin URI: http://premium.wpmudev.org/project/custom-google-search
 Description: This plugin replaces the default WordPress search with Google Custom Search and adds a Google Custom Search widget.
-Version: 1.2.2
+Version: 1.2.3
 Author: WPMU DEV
 Author URI: http://premium.wpmudev.org
 WDP ID: 252
@@ -318,7 +318,7 @@ class CustomGoogleSearch {
     function display_search_box() {
         global $wp_query;
 
-        if ( stripos( $_SERVER['REQUEST_URI'], '/?s=' ) === FALSE && stripos( $_SERVER['REQUEST_URI'], '/search/') === FALSE ) {
+        if(!$wp_query->is_search) {
             return;
         }
         if ( !isset( $this->settings['engine_id'] ) || '' == $this->settings['engine_id'] ) {

@@ -6,6 +6,9 @@ Contributors: Andrey Shipilov, Cole S
 
 == Changelog ==
 
+= 1.2.3 =
+- Fixed search page detection
+
 = 1.2.2 =
 - Added option to choose different methods of displaying search results
 - Fixed security issues
