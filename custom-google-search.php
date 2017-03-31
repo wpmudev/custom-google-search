@@ -34,12 +34,6 @@ class CustomGoogleSearch {
     var $text_domain = 'custom-google-search';
     var $option_name = 'cgs';
 
-
-
-    function CustomGoogleSearch() {
-        __construct();
-    }
-
     /**
      * PHP 5 constructor
      **/
@@ -71,6 +65,8 @@ class CustomGoogleSearch {
 
         add_action( 'wp_enqueue_scripts', array( &$this, 'add_js_css' ) );
 
+        add_action( 'admin_enqueue_scripts', array( $this, 'settings_scripts' ) );
+
         //creating menu of the plugin
         add_action( 'admin_menu', array( &$this, 'admin_menu' ) );
 
@@ -79,6 +75,8 @@ class CustomGoogleSearch {
 
         add_action( 'template_redirect', array( &$this, 'display_search_box' ) );
         add_filter( 'get_search_form', array( &$this, 'change_regular_search_box' ) );
+
+        add_shortcode( 'cgs_search_result', array( $this, 'cgs_search_result_shortcode' ) );
     }
 
 
@@ -86,23 +84,19 @@ class CustomGoogleSearch {
      * including JS/CSS
      **/
     function add_js_css() {
-        //including JS
-        wp_enqueue_script( 'jquery' );
-        wp_enqueue_script( 'jquery-ui-dialog' );
-
-        //including CSS
-        wp_enqueue_style( 'CGSStyle', $this->plugin_url . 'style/cgs-style.css' );
-        //theme for popup
-        if ( isset( $this->settings['popup_theme'] ) && '' != $this->settings['popup_theme'] ) {
-            wp_enqueue_style( 'CGSStyle_popup_theme', $this->plugin_url . 'style/popup_themes/' . $this->settings['popup_theme'] . '/custom.css' );
-        } else {
-            $popup_themes = $this->get_popup_themes();
-            wp_enqueue_style( 'CGSStyle_popup_theme', $this->plugin_url . 'style/popup_themes/' . $popup_themes[0]['name']  . '/custom.css' );
-        }
+       
         // CSS for hide Search button
         if ( isset( $this->settings['hide_button'] ) && '1' == $this->settings['hide_button'] ) {
             wp_enqueue_style( 'CGSHideButton', $this->plugin_url . 'style/cgs-hide-button.css' );
         }
+    }
+
+    /**
+     * including scripts for admin
+     **/
+    public function settings_scripts(){
+        wp_register_script( 'cgs-settings-script', plugins_url('js/admin-settings.js', __FILE__) );
+        wp_enqueue_script( 'cgs-settings-script' );
     }
 
     /**
@@ -187,128 +181,68 @@ class CustomGoogleSearch {
         else
             $theme = '';
 
-        //set protocol (http by default)
-        $protocol = ( !isset( $this->settings['protocol'] ) ) ? 'http:' : ( ( isset( $this->settings['protocol'] ) && 'relative' != $this->settings['protocol'] ) ? $this->settings['protocol'] : '');
+        $attrs['data-enableAutoComplete'] = 'true';
+        $gcse_code = 'search';
+        $attrs['data-queryParameterName'] = 's';
 
-        //run search by query
-        if ( isset( $args['search_text'] ) ) {
-            $search_query = get_search_query();
-            $search_text = '
-                ///run search by query
-                customSearchControl.execute("' . $search_query . '");';
+        if( !empty( $this->settings['page_mode'] ) && 'custom_page' === $this->settings['page_mode'] ) {
+            $attrs['data-queryParameterName'] = 'q';
         }
-        else
-            $search_text = '';
 
-        //gen rendom search box ID
-        $search_div_id = "cgs-search-form-". rand( 0, 99 ) ;
+        if( !empty( $args['widget_id'] ) || !empty( $args['regular_search_box'] ) ) {
+            if( empty( $this->settings['same_window'] ) ) {
+                $attrs['data-newWindow'] = 'true';
+            }
 
+            //gen rendom search box ID
+            $attrs['data-gname'] = "cgs-search-form-". rand( 0, 99 ) ;
 
-        $popup_script = '';
-        //choose how display result
-        if( isset( $args['display_results'] ) && 1 == $args['display_results'] ){
-            //display result in Popup
-            $CSC_draw = 'customSearchControl.draw( "cgs_popup", options );
-                         customSearchControl.setSearchCompleteCallback( this, CallBackDisplayPopup );';
-            $popup_script = '
+            if( !empty( $this->settings['page_mode'] ) && ( 'search' === $this->settings['page_mode'] || 'generated' === $this->settings['page_mode'] ) ) {
+                //display result on search page
+                $gcse_code = 'searchbox-only';
+                $attrs['data-resultsUrl'] = home_url();
+            } elseif( !empty( $this->settings['page_mode'] ) && 'custom_page' === $this->settings['page_mode'] ) {
 
-                //callback function
-                function CallBackDisplayPopup(result) {
-                	jQuery( "#cgs_popup" ).dialog( "open" );
+                global $post;
+
+                $page_id = !empty( $this->settings['search_result_page'] )
+                        ? (int)$this->settings['search_result_page']
+                        : 0;
+                if ( empty( $post->ID ) || $page_id !== $post->ID ) {
+                    $gcse_code = 'searchbox-only';
+                    $resultsUrl = !empty( $page_id )
+                            ? get_permalink( $page_id )
+                            : home_url() . '/?s=' . get_search_query();
+                    $attrs['data-resultsUrl'] = $resultsUrl;
                 }
-
-				//code for display popup with results
-	            jQuery( document ).ready( function() {
-
-	                // popup
-	                jQuery( "#cgs_popup" ).dialog({
-	                    autoOpen: false,
-	                    width: 600,
-	                    height: 500,
-	                    modal: true
-	                });
-
-	            });
-
-
-            ';
-
-        } elseif ( isset( $args['display_results'] ) && 2 == $args['display_results'] ) {
-            //display result bottom of thw widget
-            $CSC_draw = 'customSearchControl.draw( "cgs-widget", options );
-            	jQuery("form.gsc-search-box").on("submit", function() {
-					jQuery(this).find(".gsc-search-button").trigger("click");
-					return false;
-				});
-            ';
-
-        } elseif ( isset( $args['display_results'] ) && 3 == $args['display_results'] ) {
-            //display result bottom of thw widget
-            $CSC_draw = '
-                customSearchControl.draw( "cgs", options );
-
-                customSearchControl.setSearchStartingCallback( this, function( control, searcher, query ) {
-                    window.location.href = "' . home_url() . '/?s=" + query;
-                });
-				jQuery("form.gsc-search-box").on("submit", function() {
-					jQuery(this).find(".gsc-search-button").trigger("click");
-					return false;
-				});
-            ';
-        } else {
-            $CSC_draw = 'customSearchControl.draw( "cgs-' . $search_div_id . '", options );';
+            }
         }
-        $same_window = isset($this->settings['same_window']) ? $this->settings['same_window'] : '';
-        if($same_window)
-            $same_window = 'customSearchControl.setLinkTarget(google.search.Search.LINK_TARGET_SELF);';
-        else
-            $same_window = '';
 
+        $all_attrs = '';
+        foreach ( $attrs as $key => $val ) {
+            $all_attrs .= ' ' . $key . '="' . $val . '"';
+        }
+        
         //get code of seach box
-        $search_box = '
-            <script src="' . $protocol . '//www.google.com/jsapi" type="text/javascript"></script>
+        $search_box = "
+            <script type='text/javascript'>
+                (function() {
+                    var cx = '" . $this->settings['engine_id'] . "';
+                    var gcse = document.createElement('script');
+                    gcse.type = 'text/javascript';
+                    gcse.async = true;
+                    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                        '//www.google.com/cse/cse.js?cx=' + cx;
+                    var s = document.getElementsByTagName('script')[0];
+                    s.parentNode.insertBefore(gcse, s);
+                 })();
+            </script>";
+        $search_box .= '<div class="wgs_wrapper">';
+        $search_box .= '<div class="gcse-' . $gcse_code . '" ' . $all_attrs . '></div>';
+        $search_box .= '</div>';
 
-            <div id="' . $search_div_id . '" style="width: 100%;">Loading</div>
-            <script type="text/javascript">
-                google.load( "search", "1", {language : "'. get_locale() . '",'
-                . $theme . '} );
-                google.setOnLoadCallback( function() {
-                var customSearchControl = new google.search.CustomSearchControl( "' . $this->settings['engine_id'] . '" );
 
-
-                var options = new google.search.DrawOptions();
-                options.setSearchFormRoot("' . $search_div_id . '");
-                options.setAutoComplete(true);
-
-                customSearchControl.setResultSetSize( google.search.Search.FILTERED_CSE_RESULTSET );
-                ' . $same_window . '
-                ' . $CSC_draw .'
-
-                ' . $search_text .'
-
-                }, true );
-
-                ' . $popup_script . '
-
-            </script>
-         ';
-
-        if ( isset( $args['display_results'] ) && 1 == $args['display_results'] ) {
-             //add popup for results
-            $search_box .= '<div id="cgs_popup" title="' . __( 'Search Results', $this->text_domain ) . '"><p></p></div>';
-        } elseif ( isset( $args['display_results'] ) && 2 == $args['display_results'] ) {
-            //add block for shoe results bottom of widget
-            $search_box .= '<div id="cgs-widget" style="width:100%;"></div>';
-        } else {
-            $search_box .= '<div id="cgs-' . $search_div_id . '" style="width:100%;"></div>';
-        }
-
-        //include defaul CSS from Google for default theme
-        if ( isset( $this->settings['style'] ) && 'DEFAULT' == $this->settings['style'] ) {
-            $search_box .= '<link rel="stylesheet" href="' . $protocol . '//www.google.com/cse/style/look/default.css" type="text/css" />';
-        }
-
-        return $search_box;
+        return $search_box;        
     }
 
 
@@ -337,7 +271,7 @@ class CustomGoogleSearch {
             $search_query = get_search_query();
             if ( '' != $search_query )
                 $args = array(
-                    'search_text' => $search_query
+                    'results' => true,
                 );
 
             $search_box = $this->generate_search_box( $args );
@@ -372,7 +306,7 @@ class CustomGoogleSearch {
             $wp_query->posts[] = $post;
             $wp_query->post_count = 1;
         }
-        else {
+        elseif( $this->settings['page_mode'] == 'generated' ) {
             get_header();
 
             echo '<div id="content" role="main">';
@@ -407,11 +341,22 @@ class CustomGoogleSearch {
     function change_regular_search_box( $form ) {
         if ( isset( $this->settings['engine_id'] ) && '' != $this->settings['engine_id'] ) {
             $args = array(
-                'display_results' => 3
+                'regular_search_box' => true,
             );
             $form = '<div id="searchform"> ' . $this->generate_search_box( $args ) .'</div>';
         }
         return $form;
+    }
+
+    /**
+    * Shortcode callback
+    **/
+    function cgs_search_result_shortcode( $atts ) {
+        $args = array(
+            'shortcode' => true,
+        );
+
+        return $this->generate_search_box( $args );
     }
 
 
