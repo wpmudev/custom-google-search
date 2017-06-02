@@ -369,4 +369,26 @@ function cgs_generate_search_box($args = '') {
 	echo $custom_google_search->generate_search_box($args);
 }
 
-?>
+add_action( 'wp_footer', function() {
+    ?>
+    <style>
+        .gsc-control-cse .gsc-table-result {
+	font-family : inherit;
+}
+
+.gsc-control-cse .gsc-input-box {
+	height : inherit;
+}
+
+input.gsc-input,
+.gsc-input-box,
+.gsc-input-box-hover,
+.gsc-input-box-focus,
+.gsc-search-button, input.gsc-search-button-v2 {
+	box-sizing  : content-box;
+	line-height : normal;
+	margin-top  : 0px;
+}
+    </style>
+    <?php
+} );
