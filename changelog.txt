@@ -7,7 +7,9 @@ Contributors: Andrey Shipilov, Cole S
 == Changelog ==
 
 = 1.2.3 =
-- Fixed search page detection
+- Fixed: Search page detection
+- Fixed: Replace old google API with new google API
+- Fixed: Search icon was not working
 
 = 1.2.2 =
 - Added option to choose different methods of displaying search results
