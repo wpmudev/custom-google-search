@@ -251,11 +251,17 @@ class CustomGoogleSearch {
      **/
     function display_search_box() {
         global $wp_query;
+        $display_search_box = true;
 
-        if(!$wp_query->is_search) {
-            return;
+        if( ! $wp_query->is_search || 
+            ( isset( $wp_query->query['post_type'] ) && '' != $wp_query->query['post_type'] ) ||
+            ! isset( $this->settings['engine_id'] ) || 
+            '' == $this->settings['engine_id'] 
+        ){
+            $display_search_box = false;
         }
-        if ( !isset( $this->settings['engine_id'] ) || '' == $this->settings['engine_id'] ) {
+
+        if ( ! apply_filters( 'cgs-display_search_box', $display_search_box ) ) {
             return;
         }
 
